@@ -1,33 +1,24 @@
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Epic extends Task {
-    protected HashMap<Integer, SubTask> subTasks;
+    protected ArrayList<Integer> subTasks;
 
     public Epic(int id, String name, String description, String status) {
         super(id, name, description, status);
-        subTasks = new HashMap<Integer, SubTask>();
+        subTasks = new ArrayList<>();
     }
-
     public void addSubTask(SubTask subTask) {
-        subTasks.put(subTask.getId(), subTask);
-        this.updateStatus();
-    }
-    public void updateSubTask(SubTask subTask) {
-
-        subTasks.put(subTask.getId(), subTask);
-        this.updateStatus();
+        subTasks.add(subTask.getId());
     }
     public void removeSubTask(int id) {
         subTasks.remove(id);
-        this.updateStatus();
     }
     public void removeAllSubTask() {
         subTasks.clear();
-        this.updateStatus();
     }
-    public Collection<SubTask> getAllSubTask() {
-        return subTasks.values();
+    public ArrayList<Integer> getAllSubTask() {
+        return subTasks;
     }
 
     @Override
@@ -39,40 +30,16 @@ public class Epic extends Task {
                 ", status='" + status + '\'' +
                 ", subTasks: [";
         boolean isFirstSubTask = true;
-        for (SubTask subTask : subTasks.values()) {
+        for (Integer subTaskId : subTasks) {
             if (!isFirstSubTask) {
                 result += ", ";
             }
             else {
                 isFirstSubTask = false;
             }
-            result += subTask;
+            result += "id=" + subTaskId;
         }
         result += "]}";
         return result;
-    }
-
-    //метод для обновления статуса эпика (проходит по всем подзадачам эпика)
-    public void updateStatus() {
-        //NEW DONE IN_PROGRESS
-        int taskDoneCounter = 0;
-        int taskNewCounter = 0;
-        for (SubTask subTask : subTasks.values()) {
-            if (subTask.getStatus().equals("NEW")) {
-                taskNewCounter++;
-            }
-            else if (subTask.getStatus().equals("DONE")) {
-                taskDoneCounter++;
-            }
-        }
-        if (taskNewCounter == subTasks.size()) {
-            this.status = "NEW";
-        }
-        else if (taskDoneCounter == subTasks.size()) {
-            this.status = "DONE";
-        }
-        else  {
-            this.status =  "IN_PROGRESS";
-        }
     }
 }

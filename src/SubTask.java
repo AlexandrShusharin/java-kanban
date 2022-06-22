@@ -1,16 +1,15 @@
 public class SubTask extends Task {
-    public int parentId;
+    public int epicId;
 
     public SubTask(int id, String name, String description, String status, Epic epic) {
         super(id, name, description, status);
-        this.parentId = epic.id;
-        //epic.addSubTask(this);
+        this.epicId = epic.id;
     }
-    public int getParentId() {
-        return parentId;
+    public int getEpicId() {
+        return epicId;
     }
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
     }
 
     @Override
@@ -20,7 +19,7 @@ public class SubTask extends Task {
                 ", name='" + name + '\'' +
                 ", description.lenght='" + description.length() + '\'' +
                 ", status='" + status + '\'' +
-                ", parentId=" + parentId +
+                ", epicId=" + epicId +
                 '}';
     }
 

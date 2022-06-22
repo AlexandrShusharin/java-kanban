@@ -40,7 +40,6 @@ public class Task {
         return status;
     }
 
-    //не делаем метод публичным, чтобы огнаничить доступ в эпике
     public void setStatus(String status) {
         this.status = status;
     }

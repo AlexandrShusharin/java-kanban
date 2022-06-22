@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -23,7 +24,8 @@ public class TaskManager {
     }
     public void addSubTask (SubTask subTask) {
         subTaskList.put(subTask.getId(), subTask);
-        epicList.get(subTask.getParentId()).addSubTask(subTask);
+        epicList.get(subTask.getEpicId()).addSubTask(subTask);
+        updateEpicStatus(subTask.getEpicId());
     }
 
     //методы обновления задач
@@ -35,13 +37,13 @@ public class TaskManager {
     }
     public void updateSubTask (SubTask subTask) {
         subTaskList.put(subTask.getId(), subTask);
-        epicList.get(subTask.getParentId()).updateSubTask(subTask);
+        updateEpicStatus(subTask.getEpicId());
     }
 
     //методы удаления задач пл id (по типу)
     public void removeEpic (int taskId) {
-        for (SubTask subTask : epicList.get(taskId).getAllSubTask()) {
-            subTaskList.remove(subTask.getId());
+        for (Integer subTaskId : epicList.get(taskId).getAllSubTask()) {
+            subTaskList.remove(subTaskId);
         }
         epicList.remove(taskId);
     }
@@ -49,11 +51,12 @@ public class TaskManager {
         taskList.remove(taskId);
     }
     public void removeSubTask (int taskId) {
-        epicList.get(subTaskList.get(taskId).getParentId()).removeSubTask(taskId);
+        epicList.get(subTaskList.get(taskId).getEpicId()).removeSubTask(taskId);
+        updateEpicStatus(subTaskList.get(taskId).getEpicId());
         subTaskList.remove(taskId);
     }
 
-    //методы получения задач пл id (по типу)
+    //методы получения задач по id (по типу)
     public Epic getEpic (int taskId) {
         return epicList.get(taskId);
     }
@@ -75,8 +78,8 @@ public class TaskManager {
         return taskList.values();
     }
 
-    //получение подзадач эпика
-    public Collection<SubTask> getSubTasksInEpic(int epicId) { return epicList.get(epicId).getAllSubTask(); }
+    //получение подзадач эпика (вощвращает коллекцию id подзадач)
+    public ArrayList<Integer> getSubTasksInEpic(int epicId) { return epicList.get(epicId).getAllSubTask(); }
 
     //методы удаления всех задач по типу (по типу)
     public void removeAllEpic () {
@@ -90,6 +93,31 @@ public class TaskManager {
         subTaskList.clear();
         for (Epic epic : epicList.values()) {
             epic.removeAllSubTask();
+            updateEpicStatus(epic.getId());
+        }
+    }
+
+    //метод для обновления статуса эпика (проходит по всем подзадачам эпика)
+    public void updateEpicStatus(int epicId) {
+        //NEW DONE IN_PROGRESS
+        int taskDoneCounter = 0;
+        int taskNewCounter = 0;
+        for (Integer subTaskId : epicList.get(epicId).getAllSubTask()) {
+            if (subTaskList.get(subTaskId).getStatus().equals("NEW")) {
+                taskNewCounter++;
+            }
+            else if (subTaskList.get(subTaskId).getStatus().equals("DONE")) {
+                taskDoneCounter++;
+            }
+        }
+        if (taskNewCounter == epicList.get(epicId).getAllSubTask().size()) {
+            epicList.get(epicId).setStatus("NEW");
+        }
+        else if (taskDoneCounter == epicList.get(epicId).getAllSubTask().size()) {
+            epicList.get(epicId).setStatus("DONE");
+        }
+        else  {
+            epicList.get(epicId).setStatus("IN_PROGRESS");
         }
     }
 
