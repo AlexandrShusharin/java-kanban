@@ -1,5 +1,5 @@
-import Task.*;
-import TaskManager.*;
+import task.*;
+import taskmanager.*;
 
 public class Main {
 
@@ -10,34 +10,29 @@ public class Main {
         //Блок тестирования
 
         //создаем тестовые объекты
-        Task task1 = new Task(taskManager.getNewTaskId(), "Задача 1", "Постричь кусты", TaskStatus.NEW);
+        Task task1 = new Task("Задача 1", "Постричь кусты", TaskStatus.NEW);
         taskManager.addTask(task1);
-        Task task2 = new Task(taskManager.getNewTaskId(), "Задача 2", "Полить газон", TaskStatus.NEW);
+        Task task2 = new Task("Задача 2", "Полить газон", TaskStatus.NEW);
         taskManager.addTask(task2);
-        Epic epic1 = new Epic(taskManager.getNewTaskId(), "Эпик 1", "Посадить цветы", TaskStatus.NEW);
+        Epic epic1 = new Epic("Эпик 1", "Посадить цветы", TaskStatus.NEW);
         taskManager.addEpic(epic1);
-        SubTask subTask1 = new SubTask(taskManager.getNewTaskId(), "Подзадача 1", "Купить семяна",
-                TaskStatus.NEW, epic1);
-        taskManager.addSubTask(subTask1);
-        SubTask subTask2 = new SubTask(taskManager.getNewTaskId(), "Подзадача 2", "Вскопать гядку",
-                TaskStatus.NEW, epic1);
-        taskManager.addSubTask(subTask2);
-        Epic epic2 = new Epic(taskManager.getNewTaskId(), "Эпик 2", "Пожарить шашлык", TaskStatus.NEW);
+        Subtask subtask1 = new Subtask("Подзадача 1", "Купить семяна", TaskStatus.NEW, epic1);
+        taskManager.addSubtask(subtask1);
+        Subtask subtask2 = new Subtask("Подзадача 2", "Вскопать гядку", TaskStatus.NEW, epic1);
+        taskManager.addSubtask(subtask2);
+        Epic epic2 = new Epic("Эпик 2", "Пожарить шашлык", TaskStatus.NEW);
         taskManager.addEpic(epic2);
-        SubTask subTask3 = new SubTask(taskManager.getNewTaskId(), "Подзадача 3", "Купить мясо",
-                TaskStatus.NEW, epic2);
-        taskManager.addSubTask(subTask3);
-        SubTask subTask4 = new SubTask(taskManager.getNewTaskId(), "Подзадача 4", "Купить мясо",
-                TaskStatus.NEW, epic2);
-        taskManager.addSubTask(subTask4);
-        SubTask subTask5 = new SubTask(taskManager.getNewTaskId(), "Подзадача 5", "Купить мясо",
-                TaskStatus.NEW, epic2);
-        taskManager.addSubTask(subTask5);
+        Subtask subtask3 = new Subtask("Подзадача 3", "Купить мясо", TaskStatus.NEW, epic2);
+        taskManager.addSubtask(subtask3);
+        Subtask subtask4 = new Subtask("Подзадача 4", "Купить мясо", TaskStatus.NEW, epic2);
+        taskManager.addSubtask(subtask4);
+        Subtask subtask5 = new Subtask("Подзадача 5", "Купить мясо", TaskStatus.NEW, epic2);
+        taskManager.addSubtask(subtask5);
 
         //вывод результата
         System.out.println(taskManager.getAllTask());
         System.out.println(taskManager.getAllEpic());
-        System.out.println(taskManager.getAllSubTask());
+        System.out.println(taskManager.getAllSubtask());
         System.out.println();
 
         //накрутка просмотров
@@ -47,8 +42,8 @@ public class Main {
         for (Task task : taskManager.getAllEpic()) {
             taskManager.getEpic(task.getId());
         }
-        for (Task task : taskManager.getAllSubTask()) {
-            taskManager.getSubTask(task.getId());
+        for (Task task : taskManager.getAllSubtask()) {
+            taskManager.getSubtask(task.getId());
         }
         for (Task task : taskManager.getAllTask()) {
             taskManager.getTask(task.getId());
@@ -62,25 +57,25 @@ public class Main {
         System.out.println("--------------Окончание истории-----------------");
 
         //меняем объекты (проверка изменения статуса эпика")
-        SubTask subTaskUpd1 = taskManager.getSubTask(4);
-        subTaskUpd1.setStatus(TaskStatus.DONE);
-        taskManager.updateSubTask(subTaskUpd1);
+        Subtask subtaskUpd1 = taskManager.getSubtask(4);
+        subtaskUpd1.setStatus(TaskStatus.DONE);
+        taskManager.updateSubtask(subtaskUpd1);
         taskManager.removeTask(2);
         taskManager.removeEpic(6);
 
         //вывод результата
         System.out.println(taskManager.getAllTask());
         System.out.println(taskManager.getAllEpic());
-        System.out.println(taskManager.getAllSubTask());
+        System.out.println(taskManager.getAllSubtask());
         System.out.println();
 
         //очистка всех подзадач
-        taskManager.removeAllSubTask();
+        taskManager.removeAllSubtask();
 
         //вывод результата
         System.out.println(taskManager.getAllTask());
         System.out.println(taskManager.getAllEpic());
-        System.out.println(taskManager.getAllSubTask());
+        System.out.println(taskManager.getAllSubtask());
         System.out.println();
     }
 }

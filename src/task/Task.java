@@ -1,4 +1,4 @@
-package Task;
+package task;
 
 public class Task {
     protected int id;
@@ -7,8 +7,7 @@ public class Task {
 
     protected TaskStatus status;
 
-    public Task(int idNumber, String name, String description, TaskStatus status) {
-        this.id = idNumber;
+    public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;

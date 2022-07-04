@@ -1,6 +1,6 @@
-package TaskManager;
+package taskmanager;
 
-import Task.*;
+import task.*;
 
 import java.util.List;
 
