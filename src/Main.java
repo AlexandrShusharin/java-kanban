@@ -1,5 +1,6 @@
 import task.*;
 import taskmanager.*;
+import java.util.List;
 
 public class Main {
 
@@ -20,14 +21,10 @@ public class Main {
         taskManager.addSubtask(subtask1);
         Subtask subtask2 = new Subtask("Подзадача 2", "Вскопать гядку", TaskStatus.NEW, epic1);
         taskManager.addSubtask(subtask2);
+        Subtask subtask3 = new Subtask("Подзадача 3", "Полить", TaskStatus.NEW, epic1);
+        taskManager.addSubtask(subtask3);
         Epic epic2 = new Epic("Эпик 2", "Пожарить шашлык", TaskStatus.NEW);
         taskManager.addEpic(epic2);
-        Subtask subtask3 = new Subtask("Подзадача 3", "Купить мясо", TaskStatus.NEW, epic2);
-        taskManager.addSubtask(subtask3);
-        Subtask subtask4 = new Subtask("Подзадача 4", "Купить мясо", TaskStatus.NEW, epic2);
-        taskManager.addSubtask(subtask4);
-        Subtask subtask5 = new Subtask("Подзадача 5", "Купить мясо", TaskStatus.NEW, epic2);
-        taskManager.addSubtask(subtask5);
 
         //вывод результата
         System.out.println(taskManager.getAllTask());
@@ -45,37 +42,33 @@ public class Main {
         for (Task task : taskManager.getAllSubtask()) {
             taskManager.getSubtask(task.getId());
         }
-        for (Task task : taskManager.getAllTask()) {
-            taskManager.getTask(task.getId());
-        }
 
         //проверка истории
+        printHistory(taskManager.getHistory());
+
+        //произвольный вызов тасков
+        taskManager.getTask(2);
+        taskManager.getTask(1);
+        taskManager.getSubtask(6);
+        taskManager.getEpic(3);
+
+        //проверка истории
+        printHistory(taskManager.getHistory());
+
+        //удаление тасков
+        taskManager.removeTask(2);
+        taskManager.removeEpic(3);
+
+        //проверка истории
+        printHistory(taskManager.getHistory());
+
+    }
+    private static void printHistory(List<Task> taskManager) {
+        System.out.println();
         System.out.println("История просмотров: ");
-        for (Task task : taskManager.getHistory()) {
+        for (Task task : taskManager) {
             System.out.println(task);
         }
         System.out.println("--------------Окончание истории-----------------");
-
-        //меняем объекты (проверка изменения статуса эпика")
-        Subtask subtaskUpd1 = taskManager.getSubtask(4);
-        subtaskUpd1.setStatus(TaskStatus.DONE);
-        taskManager.updateSubtask(subtaskUpd1);
-        taskManager.removeTask(2);
-        taskManager.removeEpic(6);
-
-        //вывод результата
-        System.out.println(taskManager.getAllTask());
-        System.out.println(taskManager.getAllEpic());
-        System.out.println(taskManager.getAllSubtask());
-        System.out.println();
-
-        //очистка всех подзадач
-        taskManager.removeAllSubtask();
-
-        //вывод результата
-        System.out.println(taskManager.getAllTask());
-        System.out.println(taskManager.getAllEpic());
-        System.out.println(taskManager.getAllSubtask());
-        System.out.println();
     }
 }
