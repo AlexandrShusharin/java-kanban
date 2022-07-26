@@ -62,6 +62,12 @@ public class Main {
         //проверка истории
         printHistory(taskManager.getHistory());
 
+        //удаление тасков (дополнительная проверка на крайние значения)
+        taskManager.removeEpic(7);
+        taskManager.removeTask(1);
+
+        //проверка истории
+        printHistory(taskManager.getHistory());
     }
     private static void printHistory(List<Task> taskManager) {
         System.out.println();

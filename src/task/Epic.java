@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Epic extends Task {
     protected ArrayList<Integer> subTasks;
 
-    public Epic( String name, String description, TaskStatus status) {
+    public Epic(String name, String description, TaskStatus status) {
         super(name, description, status);
         subTasks = new ArrayList<>();
     }
@@ -38,8 +38,7 @@ public class Epic extends Task {
         for (Integer subTaskId : subTasks) {
             if (!isFirstSubTask) {
                 result += ", ";
-            }
-            else {
+            } else {
                 isFirstSubTask = false;
             }
             result += "id=" + subTaskId;
