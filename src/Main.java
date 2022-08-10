@@ -26,11 +26,14 @@ public class Main {
         Epic epic2 = new Epic("Эпик 2", "Пожарить шашлык", TaskStatus.NEW);
         taskManager.addEpic(epic2);
 
+
         //вывод результата
-        System.out.println(taskManager.getAllTask());
-        System.out.println(taskManager.getAllEpic());
-        System.out.println(taskManager.getAllSubtask());
-        System.out.println();
+        //System.out.println(taskManager.getAllTask());
+        //System.out.println(taskManager.getAllEpic());
+        //System.out.println(taskManager.getAllSubtask());
+
+
+        //System.out.println();
 
         //накрутка просмотров
         for (Task task : taskManager.getAllTask()) {
@@ -42,7 +45,7 @@ public class Main {
         for (Task task : taskManager.getAllSubtask()) {
             taskManager.getSubtask(task.getId());
         }
-
+/*
         //проверка истории
         printHistory(taskManager.getHistory());
 
@@ -76,5 +79,6 @@ public class Main {
             System.out.println(task);
         }
         System.out.println("--------------Окончание истории-----------------");
-    }
+ */
+     }
 }

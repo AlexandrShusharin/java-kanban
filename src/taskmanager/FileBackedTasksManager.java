@@ -4,17 +4,25 @@ import task.Epic;
 import task.Subtask;
 import task.Task;
 
+import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
-    private final String backedFileName = "BackedTasksManager.csv";
+    private final String backedFileName;
 
-    public FileBackedTasksManager() {
+    public FileBackedTasksManager(String backedFileName) {
         super();
+        this.backedFileName = backedFileName;
+        if (isBackedFileExist()) {
+            //;
+        }
+        else {
+            createBackedFile();
+        }
     }
 
     @Override
@@ -73,27 +81,38 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public Epic getEpic(int taskId) {
-        return super.getEpic(taskId);
+        Epic epic = super.getEpic(taskId);
+        save();
+        return epic;
     }
 
     @Override
     public Task getTask(int taskId) {
-        return super.getTask(taskId);
+        Task task = super.getTask(taskId);
+        save();
+        return task;
     }
 
     @Override
     public Subtask getSubtask(int taskId) {
-        return super.getSubtask(taskId);
+        Subtask subtask = super.getSubtask(taskId);
+        save();
+        return subtask;
     }
 
     @Override
     public List<Epic> getAllEpic() {
-        return super.getAllEpic();
+
+        List<Epic> allEpic =  super.getAllEpic();
+        save();
+        return allEpic;
     }
 
     @Override
     public List<Subtask> getAllSubtask() {
-        return super.getAllSubtask();
+        List<Subtask> allSubtask = super.getAllSubtask();
+        save();
+        return allSubtask;
     }
 
     @Override
@@ -130,10 +149,56 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public void save() {
+       try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(backedFileName))) {
+           bufferedWriter.write("id,type,name,status,description,epic\n");
+           for (Integer taskId : tasks.keySet()) {
+               bufferedWriter.write(tasks.get(taskId).toString()+"\n");
+           }
+           for (Integer subtaskId : subtasks.keySet()) {
+               bufferedWriter.write(subtasks.get(subtaskId).toString()+"\n");
+           }
+           for (Integer epicId : epics.keySet()) {
+               bufferedWriter.write(epics.get(epicId).toString()+"\n");
+           }
+           bufferedWriter.write(historyToString(historyManager));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
-    private Path getBackedFilePath() {
-        return null;
+    public static void loadFromFile() {
+
+    }
+
+    private boolean isBackedFileExist() {
+        Path backedFilePath = Paths.get(backedFileName);
+        if (Files.exists(backedFilePath)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void createBackedFile() {
+        Path backedFilePath = Paths.get(backedFileName);
+        try {
+            Files.createFile(backedFilePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String historyToString(HistoryManager manager) {
+        List<Task> history = manager.getHistory();
+        String result = "\n";
+        for (Task task : history) {
+            if (result.isBlank()) {
+                result += task.getId();
+            } else {
+                result += "," + task.getId();
+            }
+        }
+        return result;
     }
 }

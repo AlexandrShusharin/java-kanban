@@ -18,13 +18,20 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Task.SubTask{" +
+        return  id +
+                "," + TaskType.SUBTASK +
+                "," + name +
+                "," + status +
+                "," + description +
+                "," + epicId;
+    }
+//старая реализация
+/*        return "Task.SubTask{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description.lenght='" + description.length() + '\'' +
                 ", status='" + status + '\'' +
                 ", epicId=" + epicId +
                 '}';
-    }
-
+ */
 }

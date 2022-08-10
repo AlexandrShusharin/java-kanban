@@ -28,6 +28,14 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
+        return  id +
+                "," + TaskType.EPIC +
+                "," + name +
+                "," + status +
+                "," + description +
+                "," ;
+    }
+/*
         String result = "Task.Epic{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
@@ -45,5 +53,6 @@ public class Epic extends Task {
         }
         result += "]}";
         return result;
-    }
+ */
+
 }
