@@ -10,8 +10,8 @@ public class Epic extends Task {
         subTasks = new ArrayList<>();
     }
 
-    public void addSubtask(Subtask subTask) {
-        subTasks.add(subTask.getId());
+    public void addSubtask(Integer subtaskId) {
+        subTasks.add(subtaskId);
     }
 
     public void removeSubtask(Integer id) {
