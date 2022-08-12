@@ -5,13 +5,13 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Поехали!");
+/*        System.out.println("Поехали!");
         TaskManager taskManager = Managers.getDefault();
 
         //Блок тестирования
 
         //создаем тестовые объекты
-/*        Task task1 = new Task("Задача 1", "Постричь кусты", TaskStatus.NEW);
+        Task task1 = new Task("Задача 1", "Постричь кусты", TaskStatus.NEW);
         taskManager.addTask(task1);
         Task task2 = new Task("Задача 2", "Полить газон", TaskStatus.NEW);
         taskManager.addTask(task2);
@@ -25,7 +25,7 @@ public class Main {
         taskManager.addSubtask(subtask3);
         Epic epic2 = new Epic("Эпик 2", "Пожарить шашлык", TaskStatus.NEW);
         taskManager.addEpic(epic2);
-*/
+
 
         //вывод результата
         System.out.println(taskManager.getAllTask());
@@ -36,7 +36,7 @@ public class Main {
         System.out.println();
 
         //накрутка просмотров
- /*       for (Task task : taskManager.getAllTask()) {
+        for (Task task : taskManager.getAllTask()) {
             taskManager.getTask(task.getId());
         }
         for (Task task : taskManager.getAllEpic()) {
@@ -45,9 +45,10 @@ public class Main {
         for (Task task : taskManager.getAllSubtask()) {
             taskManager.getSubtask(task.getId());
         }
- */       //проверка истории
-        printHistory(taskManager.getHistory());
 
+        //проверка истории
+        printHistory(taskManager.getHistory());
+*/
     }
 
 

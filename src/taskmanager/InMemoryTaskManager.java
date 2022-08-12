@@ -11,7 +11,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, Epic> epics;
     protected HashMap<Integer, Subtask> subtasks;
     protected HistoryManager historyManager;
-    private int lastTaskId;
+    protected int lastTaskId;
 
     public InMemoryTaskManager() {
         this.tasks = new HashMap<>();
@@ -87,20 +87,32 @@ public class InMemoryTaskManager implements TaskManager {
     //методы получения задач по id (по типу)
     @Override
     public Epic getEpic(int taskId) {
-        historyManager.add(epics.get(taskId));
-        return epics.get(taskId);
+        if (epics.containsKey(taskId)) {
+            historyManager.add(epics.get(taskId));
+            return epics.get(taskId);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public Task getTask(int taskId) {
-        historyManager.add(tasks.get(taskId));
-        return tasks.get(taskId);
+        if (tasks.containsKey(taskId)) {
+            historyManager.add(tasks.get(taskId));
+            return tasks.get(taskId);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public Subtask getSubtask(int taskId) {
-        historyManager.add(subtasks.get(taskId));
-        return subtasks.get(taskId);
+        if (subtasks.containsKey(taskId)) {
+            historyManager.add(subtasks.get(taskId));
+            return subtasks.get(taskId);
+        } else {
+            return null;
+        }
     }
 
     //методоы получения всех задач в классе (по типу)
@@ -185,4 +197,7 @@ public class InMemoryTaskManager implements TaskManager {
         return lastTaskId;
     }
 
+    protected void setStartTaskId(int value) {
+        this.lastTaskId = value;
+    }
 }
