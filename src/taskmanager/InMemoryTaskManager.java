@@ -197,7 +197,7 @@ public class InMemoryTaskManager implements TaskManager {
         return lastTaskId;
     }
 
-    protected void setStartTaskId(int value) {
+    protected void setLsatTaskId(int value) {
         this.lastTaskId = value;
     }
 }

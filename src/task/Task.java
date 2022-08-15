@@ -46,14 +46,14 @@ public class Task {
 
     @Override
     public String toString() {
-        return  id +
+        return id +
                 "," + TaskType.TASK +
                 "," + name +
                 "," + status +
                 "," + description +
                 ",";
     }
- //старая реализация
+    //старая реализация
 /*    public String toString() {
         return "Task.Task{" +
                 "id=" + id +
