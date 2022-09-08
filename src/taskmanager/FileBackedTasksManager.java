@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,28 +24,36 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    public static void main(String[] args) {
+/*   public static void main(String[] args) {
         System.out.println("Поехали!");
         TaskManager taskManager = new FileBackedTasksManager("taskManagerBase.csv");
 
         //Блок тестирования
 
         //создаем тестовые объекты
-        Task task1 = new Task("Задача 1", "Постричь кусты", TaskStatus.NEW);
+        Task task1 = new Task("Задача 1", "Постричь кусты", TaskStatus.NEW, 120,
+                LocalDateTime.parse("12-58-08-03-2022", Task.getTimeFormater()));
         taskManager.addTask(task1);
-        Task task2 = new Task("Задача 2", "Полить газон", TaskStatus.NEW);
+        Task task2 = new Task("Задача 2", "Полить газон", TaskStatus.NEW, 120);
         taskManager.addTask(task2);
         Epic epic1 = new Epic("Эпик 1", "Посадить цветы", TaskStatus.NEW);
         taskManager.addEpic(epic1);
-        Subtask subtask1 = new Subtask("Подзадача 1", "Купить семяна", TaskStatus.NEW, epic1.getId());
+        Subtask subtask1 = new Subtask("Подзадача 1", "Купить семяна", TaskStatus.NEW, 120,
+                LocalDateTime.parse("16-58-08-03-2022", Task.getTimeFormater()), epic1.getId());
         taskManager.addSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Подзадача 2", "Вскопать гядку", TaskStatus.NEW, epic1.getId());
+        Subtask subtask2 = new Subtask("Подзадача 2", "Вскопать гядку", TaskStatus.NEW, 120,
+                LocalDateTime.parse("15-58-08-03-2022", Task.getTimeFormater()), epic1.getId());
         taskManager.addSubtask(subtask2);
-        Subtask subtask3 = new Subtask("Подзадача 3", "Полить", TaskStatus.NEW, epic1.getId());
+        Subtask subtask3 = new Subtask("Подзадача 3", "Полить", TaskStatus.NEW, 120,
+                LocalDateTime.parse("10-58-08-03-2022", Task.getTimeFormater()), epic1.getId());
         taskManager.addSubtask(subtask3);
         Epic epic2 = new Epic("Эпик 2", "Пожарить шашлык", TaskStatus.NEW);
         taskManager.addEpic(epic2);
 
+
+        for (Task task : taskManager.getPrioritizedTasks()) {
+            System.out.println(task);
+        }
         //накрутка просмотров
         for (Task task : taskManager.getAllTask()) {
             taskManager.getTask(task.getId());
@@ -73,8 +82,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println("История просмотров: ");
         System.out.println(taskManager.getHistory());
         System.out.println("--------------Окончание истории-----------------");
-    }
 
+    }
+*/
     @Override
     public void addEpic(Epic epic) {
         super.addEpic(epic);
@@ -200,7 +210,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public void save() throws ManagerSaveException {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(backedFileName))) {
-            bufferedWriter.write("id,type,name,status,description,epic\n");
+            bufferedWriter.write("id,type,name,status,description,duration,startdatetime,epic\n");
             for (Integer taskId : tasks.keySet()) {
                 bufferedWriter.write(tasks.get(taskId).toString() + "\n");
             }
@@ -268,9 +278,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     static private Task taskFromString(String value) {
         String[] valueArr = value.split(",");
+
+        /*int taskId =Integer.parseInt(valueArr[0]);
+        TaskType taskType = TaskType.valueOf(valueArr[1]);
+        TaskStatus taskStatus = TaskStatus.valueOf(valueArr[3]);
+        String name = valueArr[2];
+        String description = valueArr[4];
+        long duration = Long.parseLong(valueArr[5]);
+        LocalDateTime startTime = LocalDateTime.parse(valueArr[6], Task.getTimeFormater());*/
+
         switch (TaskType.valueOf(valueArr[1])) {
             case TASK:
-                Task task = new Task(valueArr[2], valueArr[4], TaskStatus.valueOf(valueArr[3]));
+                Task task = new Task(valueArr[2], valueArr[4], TaskStatus.valueOf(valueArr[3]),
+                        Long.parseLong(valueArr[5]), LocalDateTime.parse(valueArr[6], Task.getTimeFormater()));
                 task.setId(Integer.parseInt(valueArr[0]));
                 return task;
             case EPIC:
@@ -279,7 +299,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 return epic;
             case SUBTASK:
                 Subtask subtask = new Subtask(valueArr[2], valueArr[4], TaskStatus.valueOf(valueArr[3]),
-                        Integer.parseInt(valueArr[5]));
+                        Long.parseLong(valueArr[5]), LocalDateTime.parse(valueArr[6], Task.getTimeFormater()),
+                        Integer.parseInt(valueArr[7]));
                 subtask.setId(Integer.parseInt(valueArr[0]));
                 return subtask;
             default:

@@ -1,8 +1,8 @@
 package taskmanager;
 
 import task.Epic;
-import task.Task;
 import task.Subtask;
+import task.Task;
 
 import java.util.List;
 
@@ -56,4 +56,6 @@ public interface TaskManager {
 
     //получение истории просмотра задач
     List<Task> getHistory();
+
+    List<Task> getPrioritizedTasks();
 }

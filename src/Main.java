@@ -1,11 +1,12 @@
-import task.*;
-import taskmanager.*;
+import task.Task;
+
 import java.util.List;
+
 
 public class Main {
 
     public static void main(String[] args) {
-/*        System.out.println("Поехали!");
+       /*        System.out.println("Поехали!");
         TaskManager taskManager = Managers.getDefault();
 
         //Блок тестирования

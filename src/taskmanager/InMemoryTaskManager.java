@@ -1,22 +1,27 @@
 package taskmanager;
 
-import task.*;
+import task.Epic;
+import task.Subtask;
+import task.Task;
+import task.TaskStatus;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, Task> tasks;
     protected HashMap<Integer, Epic> epics;
     protected HashMap<Integer, Subtask> subtasks;
+    TreeMap<LocalDateTime, Task> prioritizedTasks;
     protected HistoryManager historyManager;
+
     protected int lastTaskId;
 
     public InMemoryTaskManager() {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
+        this.prioritizedTasks = new TreeMap<>();
         this.lastTaskId = 0;
         this.historyManager = Managers.getDefaultHistory();
     }
@@ -30,16 +35,23 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addTask(Task task) {
-        task.setId(getNewTaskId());
-        tasks.put(task.getId(), task);
+        if (isTaskTimeNotOccupied(task)) {
+            task.setId(getNewTaskId());
+            addToPrioritizedTasks(task);
+            tasks.put(task.getId(), task);
+        }
     }
 
     @Override
     public void addSubtask(Subtask subtask) {
-        subtask.setId(getNewTaskId());
-        subtasks.put(subtask.getId(), subtask);
-        epics.get(subtask.getEpicId()).addSubtask(subtask.getId());
-        updateEpicStatus(subtask.getEpicId());
+        if (isTaskTimeNotOccupied(subtask)) {
+            subtask.setId(getNewTaskId());
+            subtasks.put(subtask.getId(), subtask);
+            addToPrioritizedTasks(subtask);
+            epics.get(subtask.getEpicId()).addSubtask(subtask.getId());
+            updateEpicStatus(subtask.getEpicId());
+            updateEpicStartEndTime(subtask.getEpicId());
+        }
     }
 
     //методы обновления задач
@@ -50,13 +62,21 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
-        tasks.put(task.getId(), task);
+        if (isTaskTimeNotOccupied(task)) {
+            updatePrioritizedTasks(task);
+            tasks.put(task.getId(), task);
+        }
     }
 
     @Override
-    public void updateSubtask(Subtask subTask) {
-        subtasks.put(subTask.getId(), subTask);
-        updateEpicStatus(subTask.getEpicId());
+    public void updateSubtask(Subtask subtask) {
+        if (isTaskTimeNotOccupied(subtask)) {
+            prioritizedTasks.put(subtask.getStartTime(), subtask);
+            updatePrioritizedTasks(subtask);
+            subtasks.put(subtask.getId(), subtask);
+            updateEpicStatus(subtask.getEpicId());
+            updateEpicStartEndTime(subtask.getEpicId());
+        }
     }
 
     //методы удаления задач пл id (по типу)
@@ -64,6 +84,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeEpic(int taskId) {
         for (Integer subTaskId : epics.get(taskId).getAllSubTask()) {
             historyManager.remove(subTaskId);
+            removeFromPrioritizedTasks(subtasks.get(subTaskId));
             subtasks.remove(subTaskId);
         }
         historyManager.remove(taskId);
@@ -72,15 +93,19 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeTask(int taskId) {
+        removeFromPrioritizedTasks(tasks.get(taskId));
         historyManager.remove(taskId);
         tasks.remove(taskId);
     }
 
     @Override
     public void removeSubtask(int taskId) {
+        prioritizedTasks.remove(subtasks.get(taskId).getStartTime());
         historyManager.remove(taskId);
         epics.get(subtasks.get(taskId).getEpicId()).removeSubtask(taskId);
         updateEpicStatus(subtasks.get(taskId).getEpicId());
+        updateEpicStartEndTime(subtasks.get(taskId).getEpicId());
+        removeFromPrioritizedTasks(subtasks.get(taskId));
         subtasks.remove(taskId);
     }
 
@@ -145,14 +170,16 @@ public class InMemoryTaskManager implements TaskManager {
     //методы удаления всех задач по типу (по типу)
     @Override
     public void removeAllEpic() {
-        for (int id : epics.keySet()) {
+        List<Integer> epicsId = new ArrayList<>(epics.keySet());
+        for (int id : epicsId) {
             removeEpic(id);
         }
     }
 
     @Override
     public void removeAllTask() {
-        for (int id : tasks.keySet()) {
+        List<Integer> tasksId = new ArrayList<>(tasks.keySet());
+        for (int id : tasksId) {
             removeTask(id);
         }
     }
@@ -168,6 +195,26 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks.values());
+    }
+
+    //метод для обновления времени эпика
+    private void updateEpicStartEndTime(int epicId) {
+        if (epics.get(epicId).getAllSubTask().size() > 0) {
+            TreeMap<LocalDateTime, Task> epicSubtasksByStart = new TreeMap<>();
+            TreeMap<LocalDateTime, Task> epicSubtasksByEnd = new TreeMap<>();
+            for (Integer subTaskId : epics.get(epicId).getAllSubTask()) {
+                epicSubtasksByStart.put(subtasks.get(subTaskId).getStartTime(), subtasks.get(subTaskId));
+                epicSubtasksByEnd.put(subtasks.get(subTaskId).getEndTime().
+                        plusMinutes(subtasks.get(subTaskId).getDuration()), subtasks.get(subTaskId));
+            }
+            epics.get(epicId).setStartTime(epicSubtasksByStart.firstKey());
+            epics.get(epicId).setEndTime(epicSubtasksByEnd.lastKey());
+        }
     }
 
     //метод для обновления статуса эпика (проходит по всем подзадачам эпика)
@@ -189,6 +236,31 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             epics.get(epicId).setStatus(TaskStatus.IN_PROGRESS);
         }
+    }
+
+
+    private boolean isTaskTimeNotOccupied(Task task) {
+         if (prioritizedTasks.containsKey(task.getStartTime())) {
+            if (prioritizedTasks.get(task.getStartTime()).getId() == task.getId()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    private void addToPrioritizedTasks(Task task) {
+        prioritizedTasks.put(task.getStartTime(), task);
+    }
+
+    private void updatePrioritizedTasks(Task task) {
+        prioritizedTasks.put(task.getStartTime(), task);
+    }
+
+    private void removeFromPrioritizedTasks(Task task) {
+        prioritizedTasks.remove(task.getStartTime());
     }
 
     //Генератор уникального номера
