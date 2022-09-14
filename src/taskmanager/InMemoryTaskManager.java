@@ -272,4 +272,9 @@ public class InMemoryTaskManager implements TaskManager {
     protected void setLsatTaskId(int value) {
         this.lastTaskId = value;
     }
+
+    @Override
+    public void load() {
+
+    }
 }

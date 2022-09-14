@@ -16,6 +16,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private final String backedFileName;
 
+    public FileBackedTasksManager() {
+        super();
+        backedFileName = null;
+    }
     public FileBackedTasksManager(String backedFileName) {
         super();
         this.backedFileName = backedFileName;
@@ -186,13 +190,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    static private void addTaskByType(FileBackedTasksManager fileBackedTasksManager, Task task) {
+    static private void addTaskByType(TaskManager tasksManager, Task task) {
         if (task instanceof Epic) {
-            fileBackedTasksManager.updateEpic((Epic) task);
+            tasksManager.updateEpic((Epic) task);
         } else if (task instanceof Subtask) {
-            fileBackedTasksManager.updateSubtask((Subtask) task);
+            tasksManager.updateSubtask((Subtask) task);
         } else if (task != null) {
-            fileBackedTasksManager.updateTask(task);
+            tasksManager.updateTask(task);
         }
     }
 
@@ -264,5 +268,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
         }
         return history;
+    }
+
+    @Override
+    public void load() {
+
     }
 }

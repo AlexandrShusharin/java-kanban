@@ -10,6 +10,7 @@ public class Epic extends Task {
     public Epic(String name, String description, TaskStatus status) {
         super(name, description, status);
         subTasks = new ArrayList<>();
+        endTime = this.startTime.plusMinutes(1);
     }
 
     public void addSubtask(Integer subtaskId) {

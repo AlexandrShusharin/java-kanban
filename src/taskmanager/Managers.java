@@ -1,10 +1,8 @@
 package taskmanager;
 
-import java.nio.file.Paths;
-
 public class Managers {
     public static TaskManager getDefault() {
-        return FileBackedTasksManager.loadFromFile(Paths.get("taskManagerBase.csv").toFile());
+        return new HTTPTaskManager("http://localhost:8078/");
     }
 
     public static HistoryManager getDefaultHistory() {
