@@ -34,7 +34,6 @@ public class Task {
         this.startTime = startTime;
     }
 
-
     public int getId() {
         return id;
     }
@@ -94,6 +93,7 @@ public class Task {
     public static LocalDateTime getUnsetDateTime() {
         return LocalDateTime.parse("01-01-01-01-2200", getTimeFormater()).plusNanos((long)Math.random()*100000);
     }
+
     @Override
     public String toString() {
         return id +
